@@ -1,0 +1,117 @@
+version: "3.9"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: cines-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$$SA_PASSWORD\" -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  db-init:
+    build:
+      context: ../db
+      dockerfile: init/Dockerfile
+    container_name: cines-db-init
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      DB_HOST: sqlserver
+      DB_PORT: 1433
+      DB_NAME: CinesDb
+      SA_PASSWORD: ${SA_PASSWORD}
+
+  premieres-service:
+    build:
+      context: ../backend
+      dockerfile: premieres-service/Dockerfile
+    container_name: cines-premieres-service
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: sqlserver
+      DB_PORT: 1433
+      DB_NAME: CinesDb
+      DB_USER: sa
+      DB_PASSWORD: ${SA_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+      SPRING_PROFILES_ACTIVE: docker
+
+  candystore-service:
+    build:
+      context: ../backend
+      dockerfile: candystore-service/Dockerfile
+    container_name: cines-candystore-service
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: sqlserver
+      DB_PORT: 1433
+      DB_NAME: CinesDb
+      DB_USER: sa
+      DB_PASSWORD: ${SA_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+      SPRING_PROFILES_ACTIVE: docker
+
+  complete-service:
+    build:
+      context: ../backend
+      dockerfile: complete-service/Dockerfile
+    container_name: cines-complete-service
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: sqlserver
+      DB_PORT: 1433
+      DB_NAME: CinesDb
+      DB_USER: sa
+      DB_PASSWORD: ${SA_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+      SPRING_PROFILES_ACTIVE: docker
+      PAYU_API_LOGIN: ${PAYU_API_LOGIN}
+      PAYU_API_KEY: ${PAYU_API_KEY}
+      PAYU_MERCHANT_ID: ${PAYU_MERCHANT_ID}
+      PAYU_ACCOUNT_ID: ${PAYU_ACCOUNT_ID}
+      PAYU_ENDPOINT: ${PAYU_ENDPOINT}
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_PREMIERES_API_URL: http://localhost:8081
+        VITE_CANDYSTORE_API_URL: http://localhost:8082
+        VITE_COMPLETE_API_URL: http://localhost:8083
+    container_name: cines-frontend
+    depends_on:
+      - premieres-service
+      - candystore-service
+      - complete-service
+    ports:
+      - "3000:80"
+
+volumes:
+  sqlserver-data:
