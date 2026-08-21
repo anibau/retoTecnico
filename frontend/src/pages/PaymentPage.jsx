@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import { completeOrder, submitPayment } from '../api/completeApi.js';
+import CheckoutStepper from '../components/payment/CheckoutStepper.jsx';
 import PaymentForm from '../components/payment/PaymentForm.jsx';
+import OrderSummary from '../components/payment/OrderSummary.jsx';
 import SuccessModal from '../components/payment/SuccessModal.jsx';
 import ErrorBanner from '../components/common/ErrorBanner.jsx';
-import { formatCurrency } from '../utils/formatCurrency.js';
 
 export default function PaymentPage() {
   const { items, total, clear } = useCart();
@@ -30,7 +31,11 @@ export default function PaymentPage() {
         amount: total,
         currency: 'PEN',
         items: items.map((item) => ({
-          productId: item.productId,
+          // Las entradas no son productos de dulcería reales en BD: se envían
+          // con un productId numérico sintético (negativo) para no colisionar
+          // con IDs reales de CandystoreProducts.
+          productId: item.kind === 'ticket' ? -item.premiereId : item.productId,
+          productName: item.name,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
         })),
@@ -75,12 +80,14 @@ export default function PaymentPage() {
 
   return (
     <div className="page">
-      <h1>Pago</h1>
-      <p style={{ color: 'var(--text-muted)', marginBottom: 20 }}>
-        Total a pagar: <strong>{formatCurrency(total)}</strong>
-      </p>
+      <CheckoutStepper currentStep={success ? 4 : 3} />
       <ErrorBanner message={error} />
-      <PaymentForm onSubmit={handleSubmit} submitting={submitting} />
+
+      <div className="payment-layout">
+        <PaymentForm onSubmit={handleSubmit} />
+        <OrderSummary items={items} total={total} submitting={submitting} />
+      </div>
+
       {success && <SuccessModal onClose={() => navigate('/')} />}
     </div>
   );

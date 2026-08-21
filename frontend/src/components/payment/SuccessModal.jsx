@@ -1,14 +1,17 @@
 import Modal from '../common/Modal.jsx';
+import { CheckCircleIcon } from '../common/icons.jsx';
 
 export default function SuccessModal({ onClose }) {
   return (
     <Modal onClose={onClose}>
-      <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
-      <h2 style={{ margin: '0 0 8px' }}>¡Compra exitosa!</h2>
-      <p style={{ color: 'var(--text-muted)', marginBottom: 24 }}>
+      <div className="success-modal-icon">
+        <CheckCircleIcon width={36} height={36} />
+      </div>
+      <h2 className="success-modal-title">¡Compra exitosa!</h2>
+      <p className="success-modal-text">
         Tu pago fue procesado correctamente. Disfruta tu función.
       </p>
-      <button className="btn-primary" onClick={onClose}>
+      <button className="btn-primary" onClick={onClose} style={{ width: '100%' }}>
         Volver al Home
       </button>
     </Modal>

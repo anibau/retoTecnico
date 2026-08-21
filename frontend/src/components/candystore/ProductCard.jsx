@@ -1,5 +1,6 @@
 import { useCart } from '../../context/CartContext.jsx';
 import { formatCurrency } from '../../utils/formatCurrency.js';
+import { categoryIcon } from '../../utils/categoryIcon.js';
 
 export default function ProductCard({ product }) {
   const { items, addItem, updateQuantity } = useCart();
@@ -7,28 +8,31 @@ export default function ProductCard({ product }) {
   const quantity = cartItem ? cartItem.quantity : 0;
 
   return (
-    <div className="card" style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <h4 style={{ margin: 0 }}>{product.name}</h4>
-      <p style={{ margin: 0, color: 'var(--text-muted)', flexGrow: 1 }}>{product.description}</p>
+    <div className="product-card">
+      <div className="product-card-icon">{categoryIcon(product.category)}</div>
+      <h4>{product.name}</h4>
+      <p>{product.description}</p>
       <strong>{formatCurrency(product.price)}</strong>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
-        <button
-          className="btn-secondary"
-          style={{ padding: '4px 12px' }}
-          onClick={() => updateQuantity(product.id, quantity - 1)}
-          disabled={quantity === 0}
-        >
-          −
+
+      {quantity === 0 ? (
+        <button className="btn-primary product-card-add" onClick={() => addItem(product)}>
+          Agregar
         </button>
-        <span>{quantity}</span>
-        <button
-          className="btn-secondary"
-          style={{ padding: '4px 12px' }}
-          onClick={() => addItem(product)}
-        >
-          +
-        </button>
-      </div>
+      ) : (
+        <div className="product-card-stepper">
+          <button
+            type="button"
+            className="btn-step"
+            onClick={() => updateQuantity(product.id, quantity - 1)}
+          >
+            −
+          </button>
+          <span>{quantity}</span>
+          <button type="button" className="btn-step" onClick={() => addItem(product)}>
+            +
+          </button>
+        </div>
+      )}
     </div>
   );
 }

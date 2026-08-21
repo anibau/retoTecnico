@@ -5,7 +5,7 @@ export default function PremiereList({ premieres, onSelect }) {
     return <p style={{ color: 'var(--text-muted)' }}>No hay estrenos disponibles.</p>;
   }
   return (
-    <div>
+    <div className="premiere-grid">
       {premieres.map((premiere) => (
         <PremiereCard key={premiere.id} premiere={premiere} onSelect={onSelect} />
       ))}

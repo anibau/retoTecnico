@@ -4,6 +4,8 @@ WORKDIR /workspace
 COPY pom.xml .
 COPY common ./common
 COPY candystore-service ./candystore-service
+COPY premieres-service/pom.xml ./premieres-service/pom.xml
+COPY complete-service/pom.xml ./complete-service/pom.xml
 RUN mvn -pl common,candystore-service -am package -DskipTests -q
 
 FROM eclipse-temurin:11-jre-alpine

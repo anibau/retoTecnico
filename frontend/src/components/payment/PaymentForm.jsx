@@ -41,7 +41,9 @@ function validate(form) {
   return errors;
 }
 
-export default function PaymentForm({ onSubmit, submitting }) {
+export const PAYMENT_FORM_ID = 'payment-form';
+
+export default function PaymentForm({ onSubmit }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
 
@@ -59,13 +61,16 @@ export default function PaymentForm({ onSubmit, submitting }) {
   };
 
   return (
-    <form className="card" style={{ padding: 24 }} onSubmit={handleSubmit}>
+    <form id={PAYMENT_FORM_ID} className="card payment-form" onSubmit={handleSubmit}>
+      <h3 className="payment-form-title">Datos de pago</h3>
+
       <CardInputFields form={form} errors={errors} onChange={handleChange} />
 
       <div className="field">
         <label>Correo electrónico</label>
         <input
           type="email"
+          placeholder="correo@ejemplo.com"
           value={form.email}
           onChange={(e) => handleChange('email', e.target.value)}
         />
@@ -76,13 +81,14 @@ export default function PaymentForm({ onSubmit, submitting }) {
         <label>Nombre completo</label>
         <input
           type="text"
+          placeholder="Juan Pérez"
           value={form.fullName}
           onChange={(e) => handleChange('fullName', e.target.value)}
         />
         {errors.fullName && <span className="field-error">{errors.fullName}</span>}
       </div>
 
-      <div style={{ display: 'flex', gap: 16 }}>
+      <div className="field-row">
         <div className="field" style={{ width: 140 }}>
           <label>Tipo de documento</label>
           <select
@@ -100,16 +106,13 @@ export default function PaymentForm({ onSubmit, submitting }) {
           <label>Número de documento</label>
           <input
             type="text"
+            placeholder="12345678"
             value={form.documentNumber}
             onChange={(e) => handleChange('documentNumber', e.target.value)}
           />
           {errors.documentNumber && <span className="field-error">{errors.documentNumber}</span>}
         </div>
       </div>
-
-      <button className="btn-primary" type="submit" disabled={submitting} style={{ width: '100%', marginTop: 8 }}>
-        {submitting ? 'Procesando pago...' : 'Pagar'}
-      </button>
     </form>
   );
 }

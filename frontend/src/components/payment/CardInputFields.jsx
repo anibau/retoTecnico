@@ -1,6 +1,16 @@
+const CARD_BRANDS = ['VISA', 'Mastercard', 'AMEX', 'Discover'];
+
 export default function CardInputFields({ form, errors, onChange }) {
   return (
     <>
+      <div className="card-brands">
+        {CARD_BRANDS.map((brand) => (
+          <span key={brand} className="card-brand-badge">
+            {brand}
+          </span>
+        ))}
+      </div>
+
       <div className="field">
         <label>Número de tarjeta</label>
         <input
@@ -14,7 +24,7 @@ export default function CardInputFields({ form, errors, onChange }) {
         {errors.cardNumber && <span className="field-error">{errors.cardNumber}</span>}
       </div>
 
-      <div style={{ display: 'flex', gap: 16 }}>
+      <div className="field-row">
         <div className="field" style={{ flex: 1 }}>
           <label>Fecha de expiración (MM/AA)</label>
           <input

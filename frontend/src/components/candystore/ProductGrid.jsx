@@ -5,13 +5,7 @@ export default function ProductGrid({ products }) {
     return <p style={{ color: 'var(--text-muted)' }}>No hay productos disponibles.</p>;
   }
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-        gap: 16,
-      }}
-    >
+    <div className="product-grid">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

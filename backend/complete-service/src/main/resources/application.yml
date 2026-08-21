@@ -17,7 +17,7 @@ spring:
 
 security:
   jwt:
-    secret: ${JWT_SECRET:cines-ecommerce-super-secret-key-2026-change-me}
+    secret: ${JWT_SECRET:secret-key-2026}
     expiration-ms: ${JWT_EXPIRATION_MS:1800000}
     issuer: premieres-service
 

@@ -4,6 +4,8 @@ WORKDIR /workspace
 COPY pom.xml .
 COPY common ./common
 COPY premieres-service ./premieres-service
+COPY candystore-service/pom.xml ./candystore-service/pom.xml
+COPY complete-service/pom.xml ./complete-service/pom.xml
 RUN mvn -pl common,premieres-service -am package -DskipTests -q
 
 # Runtime stage

@@ -26,9 +26,7 @@ $SQLCMD -S "${DB_HOST},${DB_PORT}" -U sa -P "${SA_PASSWORD}" -Q "IF NOT EXISTS (
 run_sql_file() {
   local file="$1"
   echo "Ejecutando ${file}..."
-  # -f 65001: fuerza codepage UTF-8 al leer el .sql; sin esto sqlcmd usa la codepage
-  # del sistema y corrompe tildes/ñ en los literales N'...' (ej. "elección" -> "elecciÃ³n").
-  $SQLCMD -S "${DB_HOST},${DB_PORT}" -U sa -P "${SA_PASSWORD}" -d "${DB_NAME}" -f 65001 -i "${file}"
+  $SQLCMD -S "${DB_HOST},${DB_PORT}" -U sa -P "${SA_PASSWORD}" -d "${DB_NAME}" -i "${file}"
 }
 
 for f in ./schema/*.sql; do

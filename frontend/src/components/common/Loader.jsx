@@ -1,5 +1,8 @@
 export default function Loader({ label = 'Cargando...' }) {
   return (
-    <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>{label}</div>
+    <div className="loader">
+      <span className="spinner" />
+      <span>{label}</span>
+    </div>
   );
 }

@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useMemo, useState } from 'react
 
 const CartContext = createContext(null);
 
+const ticketProductId = (premiereId) => `ticket-${premiereId}`;
+
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
 
@@ -20,6 +22,29 @@ export function CartProvider({ children }) {
           name: product.name,
           unitPrice: product.price,
           quantity: 1,
+          kind: 'product',
+        },
+      ];
+    });
+  }, []);
+
+  const setTicketQuantity = useCallback((premiere, quantity, unitPrice) => {
+    setItems((prev) => {
+      // Solo se admite una película activa por orden: cualquier selección de
+      // entradas anterior se reemplaza por la nueva.
+      const withoutTickets = prev.filter((item) => item.kind !== 'ticket');
+      if (quantity <= 0) {
+        return withoutTickets;
+      }
+      return [
+        ...withoutTickets,
+        {
+          productId: ticketProductId(premiere.id),
+          name: `Entrada: ${premiere.title}`,
+          unitPrice,
+          quantity,
+          kind: 'ticket',
+          premiereId: premiere.id,
         },
       ];
     });
@@ -45,8 +70,23 @@ export function CartProvider({ children }) {
     [items]
   );
 
+  const ticketItems = useMemo(() => items.filter((item) => item.kind === 'ticket'), [items]);
+  const productItems = useMemo(() => items.filter((item) => item.kind !== 'ticket'), [items]);
+
   return (
-    <CartContext.Provider value={{ items, addItem, updateQuantity, removeItem, clear, total }}>
+    <CartContext.Provider
+      value={{
+        items,
+        productItems,
+        ticketItems,
+        addItem,
+        setTicketQuantity,
+        updateQuantity,
+        removeItem,
+        clear,
+        total,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

@@ -1,31 +1,27 @@
+import { ChevronRightIcon } from '../common/icons.jsx';
+import { useCart } from '../../context/CartContext.jsx';
+
 export default function PremiereCard({ premiere, onSelect }) {
+  const { ticketItems } = useCart();
+  const selectedTicket = ticketItems.find((item) => item.premiereId === premiere.id);
+
   return (
-    <article
-      className="card"
-      style={{
-        display: 'flex',
-        gap: 20,
-        padding: 16,
-        marginBottom: 16,
-        alignItems: 'center',
-      }}
-    >
-      <img
-        src={premiere.imageUrl}
-        alt={premiere.title}
-        onClick={() => onSelect(premiere)}
-        style={{
-          width: 180,
-          height: 120,
-          objectFit: 'cover',
-          borderRadius: 8,
-          cursor: 'pointer',
-          flexShrink: 0,
-        }}
-      />
-      <div>
-        <h3 style={{ margin: '0 0 8px' }}>{premiere.title}</h3>
-        <p style={{ margin: 0, color: 'var(--text-muted)' }}>{premiere.description}</p>
+    <article className="premiere-card" onClick={() => onSelect(premiere)}>
+      <div className="premiere-card-image">
+        <img src={premiere.imageUrl} alt={premiere.title} loading="lazy" />
+        {selectedTicket && (
+          <span className="badge badge-accent premiere-card-badge">
+            {selectedTicket.quantity} {selectedTicket.quantity === 1 ? 'entrada' : 'entradas'}
+          </span>
+        )}
+      </div>
+      <div className="premiere-card-body">
+        <h3>{premiere.title}</h3>
+        <p>{premiere.description}</p>
+        <span className="premiere-card-link">
+          {selectedTicket ? 'Editar entradas' : 'Comprar entradas'}
+          <ChevronRightIcon width={16} height={16} />
+        </span>
       </div>
     </article>
   );
