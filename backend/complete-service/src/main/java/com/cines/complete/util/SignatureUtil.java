@@ -16,13 +16,6 @@ public final class SignatureUtil {
     private SignatureUtil() {
     }
 
-    /**
-     * Firma requerida por PayU: MD5(apiKey~merchantId~referenceCode~amount~currency).
-     * El monto debe formatearse EXACTAMENTE igual aquí y en additionalValues.TX_VALUE.value.
-     * Riesgo conocido: si el sandbox responde "firma inválida" al probar con tarjetas reales
-     * de prueba, revisar si espera el monto sin decimales (ej. "25") en vez de "25.00" —
-     * se deja logueado en DEBUG el string pre-MD5 para poder ajustarlo rápido.
-     */
     public static String buildSignature(String apiKey, Long merchantId, String referenceCode,
                                          BigDecimal amount, String currency) {
         String amountStr = amount.setScale(2, RoundingMode.HALF_UP).toPlainString();

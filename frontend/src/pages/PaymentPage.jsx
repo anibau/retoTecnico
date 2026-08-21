@@ -31,9 +31,6 @@ export default function PaymentPage() {
         amount: total,
         currency: 'PEN',
         items: items.map((item) => ({
-          // Las entradas no son productos de dulcería reales en BD: se envían
-          // con un productId numérico sintético (negativo) para no colisionar
-          // con IDs reales de CandystoreProducts.
           productId: item.kind === 'ticket' ? -item.premiereId : item.productId,
           productName: item.name,
           quantity: item.quantity,

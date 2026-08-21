@@ -17,13 +17,7 @@ public class OrderRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    /**
-     * Se evita un TVP (Table-Valued Parameter) para no depender de casts específicos del
-     * driver mssql-jdbc (SQLServerDataTable) sobre JdbcTemplate puro. sp_CreatePendingOrder
-     * crea solo la cabecera de la orden y devuelve el OrderId; el detalle se inserta con
-     * sp_AddOrderItem en un loop dentro de la misma transacción Spring (@Transactional en
-     * el service que orquesta esta llamada).
-     */
+
     public Long createPendingOrder(String referenceCode, String email, String fullName,
                                     String documentType, String documentNumber,
                                     BigDecimal amount, String currency) {

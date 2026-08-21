@@ -3,11 +3,7 @@ package com.cines.complete.dto.payu;
 import java.math.BigDecimal;
 import java.util.Map;
 
-/**
- * Payload interno para el webservice SUBMIT_TRANSACTION de PayU (Payments API).
- * No se expone al frontend; campos públicos para simplificar la serialización Jackson
- * de esta jerarquía de clases anidadas.
- */
+
 public class PayUSubmitTransactionRequest {
 
     public String language = "es";
