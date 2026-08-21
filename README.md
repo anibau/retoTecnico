@@ -42,4 +42,23 @@ En la pantalla de Pago, usa la tarjeta de prueba de PayU:
 ## Notas de build
 
 - El contexto de build de cada Dockerfile de servicio Java es `backend/` (no la carpeta del propio servicio), porque cada imagen compila también el módulo `common` vía Maven multi-módulo (`mvn -pl <módulo>,common -am package -DskipTests`).
-- Este entorno de desarrollo no tiene Docker instalado; `docker-compose.yml` y los Dockerfiles no se probaron end-to-end aquí. Antes de la entrega, valida con `docker compose config` (sintaxis) y `docker compose up --build` (build real) desde `docker/`.
+- El stack completo (`docker compose up --build` desde `docker/`) fue probado end-to-end: los 6 contenedores (SQL Server, `db-init`, los 3 microservicios y el frontend) levantan correctamente y el flujo de compra completo (Home → Login → Dulcería → Pago → PayU sandbox → `complete`) funciona.
+
+## Compra de entradas
+
+Desde Home, al pulsar "Comprar entradas" en un estreno se abre un selector de
+cantidad (precio fijo de S/ 5.00 por entrada). Esa selección se agrega al mismo
+carrito de la Dulcería, así que el total mostrado en Dulcería y en Pago combina
+**entradas + productos de dulcería** en un solo checkout.
+
+## Decisiones de diseño respecto al documento del reto
+
+- **Layout de Home**: el PDF pide imágenes a la izquierda y texto a la derecha
+  en una sola columna. Se optó por una grilla de tarjetas (imagen + texto) más
+  un hero superior, siguiendo un mockup de diseño provisto durante el
+  desarrollo. Es una decisión de producto consciente, no un descuido.
+- **Click en un estreno**: en vez de ir directo a Login, abre primero el
+  selector de cantidad de entradas descrito arriba; al confirmar, continúa a
+  Login igual que pedía el documento original.
+- **Google Sign-In**: no implementado (es opcional según el PDF). Solo existe
+  el flujo de invitado.
