@@ -10,9 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * premieres-service es la puerta de entrada pública del flujo (Home + emisión de sesión),
- * por lo que no exige JWT en sus propios endpoints. Aun así se declara explícitamente
- * el filtro y el permitAll, ya que Spring Security por defecto bloquea todo con login form.
+ * Solo la emisión de sesión de invitado (POST /api/v1/session) y los paths de
+ * infraestructura quedan públicos; el listado de estrenos exige el mismo JWT
+ * que candystore-service y complete-service, igual que el resto de la app.
  */
 @Configuration
 @EnableWebSecurity
@@ -27,7 +27,8 @@ public class PremieresSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtTokenProvider);
-        SecurityConfigSupport.applyStatelessJwtConfig(http, jwtFilter, "/**");
+        SecurityConfigSupport.applyStatelessJwtConfig(http, jwtFilter,
+                "/api/v1/session", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health");
         return http.build();
     }
 }
